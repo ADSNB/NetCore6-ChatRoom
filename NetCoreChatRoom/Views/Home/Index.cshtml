@@ -1,0 +1,25 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+
+    @if (User.Identity?.IsAuthenticated == true)
+    {
+        @await Html.PartialAsync("~/Views/ChatRoom/index.cshtml")
+    }
+    else
+    {
+        <h1 class="display-4">Welcome to NetCoreChatRoom challenge</h1>
+        <h2>You must be logged in to use the chat rooms functionalities</h2>
+        <h3>For test pourposes only, below are user credentials:</h3>
+        <br />
+        <h4>User Description: Can create rooms and chat</h4>
+        <h4>User: johndoe@chatroomb2c.onmicrosoft.com</h4>
+        <h4>Pass: chatroom@2022</h4>
+        <br />
+        <h4>User Description: Can create rooms and chat</h4>
+        <h4>User: silviamartins@chatroomb2c.onmicrosoft.com</h4>
+        <h4>Pass: chatroom@2022</h4>
+    }
+</div>

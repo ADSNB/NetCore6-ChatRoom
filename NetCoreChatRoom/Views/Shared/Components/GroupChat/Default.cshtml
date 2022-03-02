@@ -1,0 +1,39 @@
+﻿@using NetCoreChatRoom.Models.NetCoreChatRoomAPIService.GroupChat
+
+@model ListGroupChatModel
+
+<div class="list-group">
+    @foreach (var room in Model.GroupChat)
+    {
+        <a id="@room.Id" href="#" class="list-group-item list-group-item-action" onclick="renderChat(@room.Id)">
+            <div class="d-flex w-100 justify-content-between">
+                <h5 class="mb-1">@room.Name</h5>
+                <small>@room.LastReceivedMessage</small>
+            </div>
+            <p class="mb-1">@room.Description</p>
+            <small>ADICIONAR AS PESSOAS...</small>
+        </a>
+    }
+</div>
+
+<div id="chatMessages">
+</div>
+
+<script type="text/javascript">
+    function renderChat(codGroupChat){
+        $.ajax({
+            type: "GET",
+            url: "/ChatRoom/GetChatMessagesFromGroup",
+            data: { 'codGroupChat': codGroupChat},
+            success: function(response){
+                $("#chatMessages").html(response);
+            },
+            failure: function (response){
+                // alert(`Deu falha: ${response}`);
+            },
+            error: function(response){
+                // alert(`Deu erro: ${response}`)
+            }
+        })
+    }
+</script>

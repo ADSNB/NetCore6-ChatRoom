@@ -1,0 +1,69 @@
+﻿@using NetCoreChatRoom.Models.NetCoreChatRoomAPIService.GroupChatMessage
+@model ListGroupChatMessageModel
+
+<link rel="stylesheet" href="~/css/ChatMessage.css" asp-append-version="true" />
+
+<div class="list-group">
+
+    <div class="col-12 col-lg-7 col-xl-9">
+        <div class="position-relative"></div>
+        <div class="chat-messages p-4">
+                @foreach (var message in Model.GroupChatMessage)
+                {
+                    if (message.FromUser == User.Claims.Where(c => c.Type.Equals("name")).FirstOrDefault()?.Value)
+                    {
+                        <div class="chat-message-right pb-4">
+                            <div>
+                                <img src="https://bootdey.com/img/Content/avatar/avatar1.png" class="rounded-circle mr-1" alt="Chris Wood" width="40" height="40">
+                                <div class="text-muted small text-nowrap mt-2">2:33 am</div>
+                            </div>
+                            <div class="flex-shrink-1 bg-light rounded py-2 px-3 mr-3">
+                                <div class="font-weight-bold mb-1"><strong>You</strong></div>
+                                @message.Message
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="chat-message-left pb-4">
+                            <div>
+                                <img src="https://bootdey.com/img/Content/avatar/avatar3.png" class="rounded-circle mr-1" alt="Sharon Lessman" width="40" height="40">
+                                <div class="text-muted small text-nowrap mt-2">2:36 am</div>
+                            </div>
+                            <div class="flex-shrink-1 bg-light rounded py-2 px-3 ml-3">
+                                <div class="font-weight-bold mb-1"><strong>@message.FromUser</strong></div>
+                                @message.Message
+                            </div>
+                        </div>
+                    }
+                }
+                <div id="newMessages"></div>
+            <div class="col-12">
+                <input id="inputMessage" class="col-11" />
+                <button type="button" class="btn btn-primary" onclick="sendMessage(@Model.CodGroupChat)"> Send</button>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script type="text/javascript">
+    
+    function sendMessage(codGroupChat){
+        var message = $("#inputMessage").val();
+        $.ajax({
+            type: "POST",
+            url: "ChatRoom/SendMessageToGroup",
+            data: { 'connectionId': connection.connectionId, 'codGroupChat': codGroupChat, 'message': message},//, 'cnn': cnn},
+            success: function(response){
+                // enviado
+            },
+            failure: function (response){
+                // alert(`Deu falha: ${response}`);
+            },
+            error: function(response){
+                // alert(`Deu erro: ${response}`)
+            }
+        })
+    }
+</script>

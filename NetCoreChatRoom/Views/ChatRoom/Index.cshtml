@@ -1,0 +1,103 @@
+﻿@{
+    ViewData["Title"] = "Chat Room List";
+}
+<h1>@ViewData["Title"]</h1>
+
+<p>Chat rooms here</p>
+
+<div>
+<label>Group Name</label>
+<input id="groupNameInput" />
+</div>
+<div>
+<label>Group Description</label>
+<input id="groupDescriptionInput" />
+</div>
+<button onclick="createGroup()">Criar</button>
+
+<div id="groupChat">
+<vc:group-chat></vc:group-chat>
+</div>
+
+<script type="text/javascript">
+    connection = new signalR.HubConnectionBuilder()
+    .withUrl("https://localhost:7269/NetCoreChatRoomHub")
+    .configureLogging(signalR.LogLevel.Information)
+    .withAutomaticReconnect()
+    .build();
+    connection.start()
+        .then(function () {
+            connection.on("ReceiveMessage", function (user, message) {
+                
+            var divUser = `
+                <div class="chat-message-right pb-4">
+                    <div>
+                        <img src="https://bootdey.com/img/Content/avatar/avatar1.png" class="rounded-circle mr-1" alt="Chris Wood" width="40" height="40">
+                        <div class="text-muted small text-nowrap mt-2">2:33 am</div>
+                    </div>
+                    <div class="flex-shrink-1 bg-light rounded py-2 px-3 mr-3">
+                        <div class="font-weight-bold mb-1"><strong>You</strong></div>
+                        ${message}
+                    </div>
+                </div>`;
+
+            var divNotUser = `
+                <div class="chat-message-left pb-4">
+                    <div>
+                        <img src="https://bootdey.com/img/Content/avatar/avatar3.png" class="rounded-circle mr-1" alt="Sharon Lessman" width="40" height="40">
+                        <div class="text-muted small text-nowrap mt-2">2:36 am</div>
+                    </div>
+                    <div class="flex-shrink-1 bg-light rounded py-2 px-3 ml-3">
+                        <div class="font-weight-bold mb-1"><strong>${user}</strong></div>
+                        ${message}
+                    </div>
+                </div>`
+
+            if (user == "@User.Claims.Where(c => c.Type.Equals("name")).FirstOrDefault()?.Value")
+            {
+                document.getElementById("newMessages").innerHTML+=divUser;
+            }
+            else
+            {
+                document.getElementById("newMessages").innerHTML+=divNotUser;
+            }
+        });
+    });
+
+    function createGroup(codGroupChat){
+        var groupName = $("#groupNameInput").val();
+        var groupDescription = $("#groupDescriptionInput").val();
+        $.ajax({
+            type: "POST",
+            url: "/ChatRoom/CreateGroupChat",
+            data: {'connectionId': connection.connectionId , 'groupName': groupName, 'groupDescription': groupDescription},
+            success: function(response){
+                $("#groupNameInput").val("");
+                $("#groupDescriptionInput").val("");
+                reloadGroupChat();
+            },
+            failure: function (response){
+                // alert(`Deu falha: ${response}`);
+            },
+            error: function(response){
+                // alert(`Deu erro: ${response}`)
+            }
+        })
+    }
+
+    function reloadGroupChat(){
+        $.ajax({
+            type: "GET",
+            url: "/ChatRoom/GetChatGroups",
+            success: function(response){
+                $("#groupChat").html(response);
+            },
+            failure: function (response){
+                // alert(`Deu falha: ${response}`);
+            },
+            error: function(response){
+                // alert(`Deu erro: ${response}`)
+            }
+        })
+    }
+</script>
