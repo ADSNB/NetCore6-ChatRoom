@@ -7,8 +7,17 @@ using Microsoft.IdentityModel.Logging;
 using NetCoreChatRoom.Models;
 using NetCoreChatRoom.Services;
 using NetCoreChatRoom.Services.Interfaces;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
+
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .WriteTo.File("Log/log-.txt", rollingInterval: RollingInterval.Day)
+    .MinimumLevel.Information()
+    .CreateLogger();
+
+Log.Information("Serviço de logs iniciado");
 
 var _appSettingsModel = new AppSettingsModel();
 builder.Configuration.Bind(_appSettingsModel);

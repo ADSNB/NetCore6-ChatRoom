@@ -18,22 +18,12 @@ namespace NetCoreChatRoom.Controllers
         }
 
         [AllowAnonymous]
-        public async Task<IActionResult> Index()
-        {
-            // var novo = await _chatRoomService.Get();
-            return View();
-        }
+        public async Task<IActionResult> Index() => View();
 
-        public IActionResult Privacy()
-        {
-            return View();
-        }
+        public IActionResult Privacy() => View();
 
         [AllowAnonymous]
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
+        public IActionResult Error() => View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
 }
